@@ -10,6 +10,9 @@ class PostgreSql extends DbDumper
 {
     /** @var bool */
     protected $useInserts = false;
+    
+    /** @var bool */
+    protected $enableCompression = false;
 
     public function __construct()
     {
@@ -23,6 +26,12 @@ class PostgreSql extends DbDumper
     {
         $this->useInserts = true;
 
+        return $this;
+    }
+    
+    public function enableCompression()
+    {
+        $this->enableCompression = true;
         return $this;
     }
 
@@ -71,7 +80,11 @@ class PostgreSql extends DbDumper
             "-p {$this->port}",
             "--file=\"{$dumpFile}\"",
         ];
-
+        
+        if ($this->enableCompression) {
+            $command[] = '-Fc';
+        }
+        
         if ($this->useInserts) {
             $command[] = '--inserts';
         }
